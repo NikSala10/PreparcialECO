@@ -2,7 +2,6 @@ const express = require("express");
 const path = require("path");
 const { Server } = require("socket.io");
 const { createServer } = require("http");
-const e = require("express");
 
 const app = express();
 
@@ -70,6 +69,10 @@ app.get("/notify-marco", (req, res) => {
 
 app.post("/notify-polo", (request, response) => {
   const {userId} = request.body;
+  if (!userId) {
+    return response.status(400).send({ message: "Error: userId es requerido" });
+  }
+  console.log(`📢 Jugador ${userId} gritó Polo!`);
   io.emit("notification", { userId, message: "Polo!" });
   response.status(200).send({ message: "Grito publicado"});
 });

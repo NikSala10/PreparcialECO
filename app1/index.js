@@ -78,12 +78,12 @@ async function sendPlayer() {
             <p>Tu rol es:</p>
             <p>${rolPlayer}</p>
             <p id="text"></p>
-            <button id="gtr-polo">Gritar Polo</button>
+            <button class="gtr-polo">Gritar Polo</button>
           `
 
-        document.getElementById("gtr-polo").style.display = "none";
+        document.querySelector(".gtr-polo").style.display = "none";
         document.getElementById("text").style.display = "none";
-        document.getElementById("gtr-polo").addEventListener("click", sendGritarPolo);
+        document.querySelector(".gtr-polo").addEventListener("click", sendGritarPolo);
 
 
         } else if (rolPlayer === "marco") {
@@ -107,11 +107,11 @@ async function sendPlayer() {
             <p>Tu rol es:</p>
             <p>${rolPlayer}</p>
             <p id="text"></p>
-            <button id="gtr-polo">Gritar Polo</button>
+            <button class="gtr-polo-especial">Gritar Polo</button>
           `
-        document.getElementById("gtr-polo").style.display = "none";
+        document.querySelector(".gtr-polo-especial").style.display = "none";
         document.getElementById("text").style.display = "none";
-        document.getElementById("gtr-polo").addEventListener("click", sendGritarPolo);
+        document.querySelector(".gtr-polo-especial").addEventListener("click", sendGritarPoloEspecial);
         }
         document.getElementById("screen-espera").style.display = "none";
     });
@@ -144,35 +144,11 @@ const sendGritarMarco = () => {
   })
   .catch((error) => console.error("Error:", error));
 }
-
-const sendGritarPolo = () => {
-  if (!idPlayer) {
-    console.error("Error: idPlayer no está definido.");
-    return;
-  }
-
-  fetch ("http://localhost:5054/notify-polo/" ,{
-    method: "POST",
-    headers: {  "Content-Type": "application/json"},
-    body: JSON.stringify({userId: idPlayer, playerRol: rolPlayer})
-  })
-  .then((response) => response.json())
-  .then((data) => {
-    if (data.message === "Grito publicado") {
-      let btnPolo = document.getElementById("gtr-polo");
-      if (btnPolo) {
-        btnPolo.style.display = "none";
-      }
-    }
-  })
-  .catch((error) => console.error("Error:", error));
-}
-
 socket.on("notification", (data) => { 
-  console.log("Notificación recibida:", data); // Ver qué datos llegan
-
+  
   let textElement = document.getElementById("text");
-  let gtrPoloButton = document.getElementById("gtr-polo");
+  let gtrPoloButton = document.querySelector(".gtr-polo");
+  let gtrPoloEspecialButton = document.querySelector(".gtr-polo-especial");
   let selectedPoloContainer = document.getElementById("escoger-polo");
   let gameOverContainer = document.getElementById("game-over");
   if (gameOverContainer) {
@@ -183,9 +159,13 @@ socket.on("notification", (data) => {
     textElement.style.display = "block";
     textElement.innerHTML = `Marco ha gritado: Marco!!`;
   } 
-  if (gtrPoloButton) {
+  if (gtrPoloButton && !yaGritoPolo) {
     gtrPoloButton.style.display = "block";
   } 
+  if (gtrPoloEspecialButton && !yaGritoPoloEspecial) {
+    gtrPoloEspecialButton.style.display = "block";
+  } 
+
 
   if (rolPlayer === "marco" && data.userId) {
     selectedPoloContainer.style.display = "block";
@@ -209,6 +189,54 @@ socket.on("notification", (data) => {
     }
   }
 });
+
+let yaGritoPolo = false;
+const sendGritarPolo = () => {
+
+  if (!idPlayer) {
+    console.error("Error: idPlayer no está definido.");
+    return;
+  }
+
+  fetch ("http://localhost:5054/notify-polo/" ,{
+    method: "POST",
+    headers: {  "Content-Type": "application/json"},
+    body: JSON.stringify({userId: idPlayer})
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.message === "Grito publicado") {
+      document.querySelector(".gtr-polo").style.display = "none"; 
+      yaGritoPolo = true; 
+    }
+  })
+  .catch((error) => console.error("Error:", error));
+}
+
+let yaGritoPoloEspecial = false;
+const sendGritarPoloEspecial = () => {
+
+  if (!idPlayer) {
+    console.error("Error: idPlayer no está definido.");
+    return;
+  }
+ 
+  fetch ("http://localhost:5054/notify-polo/" ,{
+    method: "POST",
+    headers: {  "Content-Type": "application/json"},
+    body: JSON.stringify({userId: idPlayer})
+  })
+  .then((response) => response.json())
+  .then((data) => {
+    if (data.message === "Grito publicado") {
+      document.querySelector(".gtr-polo-especial").style.display = "none"; 
+      yaGritoPoloEspecial = true; 
+    }
+  })
+  .catch((error) => console.error("Error:", error));
+}
+
+
 
 function handlePoloSelection(event) {
   if (event.target.tagName === "BUTTON") {

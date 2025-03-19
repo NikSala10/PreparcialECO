@@ -8,3 +8,6 @@ GET http://localhost:5054/start-game
 
 ###
 GET http://localhost:5054/notify-marco
+
+###
+POST http://localhost:5054/notify-polo
