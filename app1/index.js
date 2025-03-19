@@ -179,7 +179,21 @@ socket.on("notification", (data) => {
   }
 
   if (data.message.includes("Game over")) {
-    console.log("🎮 FIN DEL JUEGO:", data.message);
+    const marcoDiv = document.getElementById("marco");
+    if (marcoDiv) {
+      marcoDiv.style.display = "none";
+    }
+
+    const poloDiv = document.getElementById("polo");
+    if (poloDiv) {
+      poloDiv.style.display = "none";
+    }
+
+    const poloEspecialDiv = document.getElementById("polo-especial");
+    if (poloEspecialDiv) {
+      poloEspecialDiv.style.display = "none";
+    }
+
     if (gameOverContainer) {
       gameOverContainer.style.display = "block";
       gameOverContainer.innerHTML = `
@@ -236,35 +250,87 @@ const sendGritarPoloEspecial = () => {
   .catch((error) => console.error("Error:", error));
 }
 
+document.addEventListener("click", function(event) {
+  if (event.target.classList.contains("polo-selected")) {
+    handlePoloSelection(event);
+  }
+});
 
 
 function handlePoloSelection(event) {
   if (event.target.tagName === "BUTTON") {
     const poloId = event.target.id; 
-    console.log("ID del polo seleccionado:", poloId);
 
     fetch("http://localhost:5054/select-polo/", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ userId: idPlayer, poloSelected: poloId, userName: namePlayer })
     })
-    .then((response) => response.json())
+    .then(response => response.json())
     .then((data) => {
-      console.log("📢 Respuesta del servidor:", data);
-      if (data.message === "Game over") {
-        document.getElementById("escoger-polo").style.display = "none";
+  
+      if (data && data.message && data.message.includes("Game over")) {
+        
+        let escogerPoloDiv = document.getElementById("escoger-polo");
+        if (escogerPoloDiv) {
+          escogerPoloDiv.style.display = "none";
+        } else {
+          console.error("❌ No se encontró el div 'escoger-polo'");
+        }
+        
+        let poloButtons = document.querySelectorAll(".polo-selected");
+        if (poloButtons.length > 0) {
+          poloButtons.forEach((btn) => {
+            btn.style.display = "none";
+          });
+        } else {
+          console.error("❌ No se encontraron botones con clase 'polo-selected'");
+        }
+        setTimeout(resetGame, 8000);
       }
     })
     .catch((error) => console.error("Error:", error));
   }
 }
 
-// Agregar event listener al contenedor de botones si existe
-let escogerPlBtns = document.getElementById("escoger-polo");
-if (escogerPlBtns) {
-  escogerPlBtns.addEventListener("click", handlePoloSelection);
+function resetGame() {
+  fetch("http://localhost:5054/reset-game", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" }
+  })
+  .then(response => response.json())
+  .then(data => {
+    if (data.message === "Juego reiniciado") {
+      document.getElementById("game-over").style.display = "none";
+
+      idPlayer = null;
+      rolPlayer = null;
+      namePlayer = null;
+
+      document.getElementById("register").style.display = "block";
+    }
+  })
+  .catch(error => console.error("Error:", error));
 }
 
+socket.on("resetGame", () => {
+ 
+  // Mostrar nuevamente todos los jugadores
+  document.getElementById("marco").style.display = "none";
+  document.getElementById("polo").style.display = "none";
+  document.getElementById("polo-especial").style.display = "none";
 
+  // Volver a mostrar la pantalla de registro
+  document.getElementById("register").style.display = "block";
 
-  
+  // Ocultar mensaje de Game Over si existe
+  let gameOverDiv = document.getElementById("game-over");
+  if (gameOverDiv) {
+    gameOverDiv.style.display = "none";
+  }
+
+  // Resetear variables del jugador
+  idPlayer = null;
+  rolPlayer = null;
+  namePlayer = null;
+});

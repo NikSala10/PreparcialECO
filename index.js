@@ -72,31 +72,32 @@ app.post("/notify-polo", (request, response) => {
   if (!userId) {
     return response.status(400).send({ message: "Error: userId es requerido" });
   }
-  console.log(`📢 Jugador ${userId} gritó Polo!`);
   io.emit("notification", { userId, message: "Polo!" });
   response.status(200).send({ message: "Grito publicado"});
 });
 
 app.post("/select-polo", (request, response) => {
   const {userId, poloSelected, userName} = request.body;
-  console.log("📢 POST /select-polo recibido:", request.body);
-  if (poloSelected === "polo-especial") {
-    console.log(`Game over: El marco ${userName} es ganador! 🚀`);
-    io.emit("notification", { userId, message: `Game over: El marco ${userName} es ganador!` });
-  } else {
-    console.log(`Game over: El marco ${userName} es perdedor! ❌`);
-    io.emit("notification", { userId, message: `Game over: El marco ${userName} es perdedor!` });
+  const jugadorSeleccionado = players.find(player => player.id == poloSelected);
+
+  if (!jugadorSeleccionado) {
+    return response.status(400).json({ message: "Jugador no encontrado" });
   }
-  response.status(200).send({ message: "Game over"});
+
+  const poloEspecial = players.find(player => player.rol.trim().toLowerCase() === "polo-especial");
+  if (jugadorSeleccionado.rol.trim().toLowerCase() === "polo-especial") {
+    io.emit("notification", { userId, message: `Game over: El Marco ${userName} ha ganado! 🎉 El Polo ${jugadorSeleccionado.name} ha sido capturado.`});
+  } else {
+    io.emit("notification", { userId, message: `Game over: El Marco ${userName} ha perdido. El Polo ${poloEspecial ? poloEspecial.name : "desconocido"}  ha escapado. ❌` });
+  }
+  response.status(200).json({ message: "Game over"});
 });
 
-
-io.on("connection", (socket) => {
-  socket.on("coordenadas", (data) => {
-    console.log(data);
-    io.emit("coordenadas", data);
-  });
-  socket.on("notificar-a-todos", (data) => {});
+app.post("/reset-game", (req, res) => {
+  roles = ["polo", "marco", "polo-especial"];
+  players = [];
+  io.emit("resetGame");
+  res.status(200).json({ message: "Juego reiniciado" });
 });
 
 httpServer.listen(5054);
