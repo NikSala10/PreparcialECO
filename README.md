@@ -1,6 +1,7 @@
 RECURSOS
-npm run start 
-npm install --save-dev nodemon
+npm run start     
+    npm install --save-dev nodemon
+    Set-ExecutionPolicy -Scope CurrentUser unrestricted
 
 FETCH CORTO:
 function sendMove() {
