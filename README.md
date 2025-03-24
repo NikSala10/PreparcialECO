@@ -27,3 +27,11 @@ function renderErrorState() {
   resultsP.innerHTML= ""
   resultsP.innerHTML = "Failed to load data";
 }
+
+
+METODOS HTTP
+ PUT → Si quieres sobrescribir todo el objeto.      
+     PATCH → Si solo quieres modificar una parte.
+     GET	Obtener información	   
+POST	Crear un recurso		    
+DELETE	Eliminar un recurso     
