@@ -95,11 +95,13 @@ Reemplaza toda su información con la nueva (req.body.name).
 
 
 POST
+
 app.post("/users", (req, res) => {
     const newUser = { id: Date.now(), name: req.body.name };
     users.push(newUser);
     res.status(201).json(newUser);
 });
+
 📝 ¿Qué hace?
 
 Recibe datos (req.body.name) y crea un nuevo usuario.
