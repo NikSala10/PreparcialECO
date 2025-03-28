@@ -4,6 +4,8 @@ npm run start
     npm install --save-dev nodemon
     Set-ExecutionPolicy -Scope CurrentUser unrestricted
 
+    .find(...) es un método de los arrays en JavaScript que busca el primer elemento que cumpla una condición y lo devuelve. Si no encuentra nada, devuelve undefined.
+
 FETCH CORTO:
 function sendMove() {
   const name = document.getElementById("name").value;
