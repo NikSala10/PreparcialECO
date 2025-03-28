@@ -63,7 +63,8 @@ async function sendPlayer() {
         })
       })
       .then((response) => response.json())
-      .catch((error) => console.error("Error:", error));}
+      .catch((error) => console.error("Error:", error));
+    }
 
       if(numberPlayers === 3) {
         sendStartGame();
@@ -144,6 +145,8 @@ const sendGritarMarco = () => {
   })
   .catch((error) => console.error("Error:", error));
 }
+
+
 socket.on("notification", (data) => { 
   
   let textElement = document.getElementById("text");

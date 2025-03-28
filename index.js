@@ -97,6 +97,7 @@ app.post("/reset-game", (req, res) => {
   roles = ["polo", "marco", "polo-especial"];
   players = [];
   io.emit("resetGame");
+  console.log("Juego reiniciado. Roles restaurados:", roles); 
   res.status(200).json({ message: "Juego reiniciado" });
 });
 
