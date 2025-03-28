@@ -204,3 +204,57 @@ Para poner en filas las cards
     gap: 20px;
     justify-content: center;
     margin-top: 20px;
+
+IMAGENES 
+/* 📷 Imagen General */
+.img {
+  width: 100%;
+  max-width: 100%;
+  height: auto;
+  display: block;
+  border-radius: 8px;
+  transition: transform 0.3s ease-in-out;
+}
+
+/* 🔵 Imagen Redonda */
+.img-round {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid #007bff;
+}
+
+/* 🎭 Imagen con Hover */
+.img-hover:hover {
+  transform: scale(1.05);
+  box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+/* 🖼️ Galería de Imágenes con Grid */
+.img-gallery {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 15px;
+  justify-content: center;
+  max-width: 1200px;
+  width: 100%;
+  padding: 20px;
+}
+
+.img-gallery img {
+  width: 100%;
+  border-radius: 10px;
+  transition: transform 0.3s ease-in-out;
+}
+
+.img-gallery img:hover {
+  transform: scale(1.08);
+}
+
+/* 🎯 Centrar Imágenes */
+.center-img {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
